@@ -1,6 +1,7 @@
 """
-Padrão de Qualidade: Professional NLP Extraction Pipeline (v8.8.0).
-Motivo: Blacklist reforçada para eliminar ruído de licitações comuns (asfalto, merenda, veículos).
+Padrão de Qualidade: Professional NLP Extraction Pipeline (v9.0.0).
+Motivo: Blacklist agressiva para eliminar ruído de licitações (asfalto, merenda, etc.)
+e focar apenas em entretenimento e cultura.
 """
 import re
 import io
@@ -14,7 +15,7 @@ from app.schemas.evento import EventoSchema
 from app.core.logger import log
 from selectolax.parser import HTMLParser
 
-# ✅ Lista negra expandida para filtrar o lixo do D.O.
+# ✅ Lista negra para garantir que o Hub seja de EVENTOS e não de OBRAS
 TERMOS_PROIBIDOS = [
     "ASFÁLTICO", "RECAPEAMENTO", "MERENDA", "MEDICAMENTOS", "OBRAS",
     "REFORMA", "LIMPEZA", "VEÍCULOS", "PEÇAS", "PNEUS", "SOFTWARE",
@@ -22,7 +23,7 @@ TERMOS_PROIBIDOS = [
     "ELÉTRICA", "HIDRÁULICA", "MÓVEIS", "EQUIPAMENTOS", "PINTURA", 
     "CASCALHAMENTO", "EMPRESA", "PESSOA JURÍDICA", "PESSOA FÍSICA",
     "FORNECEDORES", "PRESTAÇÃO DE SERVIÇOS", "AQUISIÇÃO", "BENS", "MICROCHIPS",
-    "REVISÃO", "ACESSÓRIOS", "PEÇAS", "DIESEL", "GASOLINA"
+    "REVISÃO", "ACESSÓRIOS", "DIESEL", "GASOLINA", "ESPECIALIZADA", "INSTALAÇÃO"
 ]
 
 class DiarioOficialExtractor(BaseExtractor):
@@ -34,26 +35,34 @@ class DiarioOficialExtractor(BaseExtractor):
             "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
             "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
         }
-        self.re_gatilhos = re.compile(r"(contratação|show|apresentação|inexigibilidade|festa|evento artístico)", re.IGNORECASE)
+        # Gatilhos de busca: focamos em termos que remetem a apresentações
+        self.re_gatilhos = re.compile(r"(contratação de artista|show|apresentação artística|inexigibilidade|festa|evento artístico|festival)", re.IGNORECASE)
         self.re_cidade = re.compile(r"PREFEITURA\s+MUNICIPAL\s+DE\s+([A-ZÀ-Ú\s\-]+)", re.IGNORECASE)
+        
+        # Regex para extrair o nome do artista/banda
         self.re_artista = re.compile(r"(?:DUPLA|BANDA|SHOW(?: ARTÍSTICO)?(?: DE)?|CONTRATAÇÃO (?:DA|DO|DE)|ARTISTA|CANTOR(?:A)?)\s+([A-ZÀ-Ú0-9\s&\'\-]{3,60}?)(?:\s+PARA|\s+NO DIA|,|\s+DURANTE|\.|\s+OBJETO)", re.IGNORECASE)
+        
         self.re_data_numerica = re.compile(r"(\d{2}/\d{2}/\d{4})")
         self.re_data_textual = re.compile(r"DIA\s+(\d{1,2})\s+DE\s+([A-ZÀ-Ú]+)\s+DE\s+(\d{4})", re.IGNORECASE)
         self.re_valor = re.compile(r"R\$\s?([\d\.]+,\d{2})")
         self.re_evento = re.compile(r"(?:FESTA DE|CARNAVAL|ANIVERSÁRIO|EXPO|FESTIVAL|VAQUEJADA)\s+([A-ZÀ-Ú0-9\s]{3,40}?)(?:\.|,|NO MUNICÍPIO|DURANTE)", re.IGNORECASE)
 
     async def extract(self):
-        log.info("🚀 [v8.8] Minerando D.O. com Blacklist Reforçada")
+        log.info("🚀 [v9.0] Minerando D.O. - Filtro de Elite Ativado")
         try:
             html = await self.fetch_html(self.base_url)
             if not html: return []
+            
             tree = HTMLParser(html)
             pdf_input = tree.css_first("input#urlPdf")
-            if not pdf_input: return []
+            if not pdf_input: 
+                log.warning("⚠️ Não foi possível encontrar o PDF do dia no D.O.")
+                return []
+                
             pdf_url = pdf_input.attributes.get("value")
             return await self._processar_pdf_performante(pdf_url)
         except Exception as e:
-            log.error(f"❌ Erro na extração: {e}")
+            log.error(f"❌ Erro na extração do D.O.: {e}")
             return []
 
     async def _processar_pdf_performante(self, pdf_url: str):
@@ -62,41 +71,51 @@ class DiarioOficialExtractor(BaseExtractor):
                 resp = await client.get(pdf_url)
                 doc = fitz.open(stream=io.BytesIO(resp.content), filetype="pdf")
                 texto_completo = ""
-                for i in tqdm(range(len(doc)), desc="Lendo PDF", unit="pag"):
+                
+                for i in tqdm(range(len(doc)), desc="Minerando PDF", unit="pag"):
                     texto_completo += doc.load_page(i).get_text("text") + "\n"
                     if i % 50 == 0: gc.collect()
+                    
                 doc.close()
                 return self._analisar_texto(texto_completo, pdf_url)
             except Exception as e:
-                log.error(f"❌ Erro PDF: {e}")
+                log.error(f"❌ Erro ao processar PDF do D.O.: {e}")
                 return []
 
     def _analisar_texto(self, texto, url):
         encontrados = []
+        # Divide o texto por prefeituras
         blocos = self.re_cidade.split(texto)
+        
         for i in range(1, len(blocos) - 1, 2):
             cidade = blocos[i].strip().upper()
             conteudo = blocos[i+1]
+            
             if self.re_gatilhos.search(conteudo):
                 evento = self._extrair_entidades(cidade, conteudo, url)
-                if evento: encontrados.append(evento)
+                if evento: 
+                    encontrados.append(evento)
+                    
         return encontrados
 
     def _extrair_entidades(self, cidade, texto_bloco, url):
         texto_limpo = re.sub(r'\s+', ' ', texto_bloco)
+        
+        # Procura por artista
         match_art = self.re_artista.search(texto_limpo)
         if not match_art: return None
 
         artista = match_art.group(1).strip().upper()
 
-        # ✅ FILTRO DE ELITE: Se o "artista" contém termos de empresa ou asfalto, descarta.
+        # ✅ FILTRO DE ELITE: Se o nome "artista" contiver termos de licitação, descartamos na hora.
         if any(proibido in artista for proibido in TERMOS_PROIBIDOS):
             return None
         
-        # Filtro adicional para evitar nomes genéricos demais
-        if len(artista) < 3 or artista.isdigit():
+        # Filtro de comprimento e caracteres
+        if len(artista) < 4 or artista.isdigit():
             return None
 
+        # Valor do Contrato (Cachet)
         match_val = self.re_valor.search(texto_limpo)
         preco = 0.0
         if match_val:
@@ -104,6 +123,7 @@ class DiarioOficialExtractor(BaseExtractor):
                 preco = float(match_val.group(1).replace(".", "").replace(",", "."))
             except: pass
 
+        # Nome do Evento (ex: Festa de Agosto)
         match_ev = self.re_evento.search(texto_limpo)
         nome_ev = match_ev.group(1).strip() if match_ev else "Evento Municipal"
 
@@ -111,7 +131,7 @@ class DiarioOficialExtractor(BaseExtractor):
             titulo=f"SHOW: {artista} ({nome_ev})",
             data_evento=self._extrair_data(texto_limpo),
             cidade=cidade,
-            local="Praça Pública",
+            local="Praça Pública / Evento Oficial",
             preco_base=preco,
             fonte="amm_mg_pdf",
             url_origem=url,
@@ -119,16 +139,21 @@ class DiarioOficialExtractor(BaseExtractor):
         )
 
     def _extrair_data(self, texto):
+        # Tenta formato textual: 12 de MAIO de 2026
         m_txt = self.re_data_textual.search(texto)
         if m_txt:
             try:
                 dt = datetime(int(m_txt.group(3)), self.meses_pt.get(m_txt.group(2).lower(), 1), int(m_txt.group(1)))
                 if dt > datetime.now(): return dt
             except: pass
+            
+        # Tenta formato numérico: 12/05/2026
         m_num = self.re_data_numerica.search(texto)
         if m_num:
             try:
                 dt = datetime.strptime(m_num.group(1), "%d/%m/%Y")
                 if dt > datetime.now(): return dt
             except: pass
-        return datetime.now() + timedelta(days=45)
+            
+        # Fallback: Se não achar data futura, coloca 60 dias à frente
+        return datetime.now() + timedelta(days=60)

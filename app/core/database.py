@@ -1,33 +1,27 @@
 """
-Justificativa Técnica: Garantir que o EventoModel seja carregado antes do create_all.
+Justificativa: Garantia de Singleton do Engine e criação de tabelas síncronas com o Modelo.
 """
-import os
 from pathlib import Path
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.core.logger import log
-# ✅ VITAL: Importar a Base e o Modelo aqui para o metadata funcionar
-from app.models import Base, EventoModel
+from app.models import Base, EventoModel # ✅ Import obrigatório
 
-Path("data").mkdir(exist_ok=True)
-DB_PATH = "data/mg_events.db"
-DATABASE_URL = f"sqlite+aiosqlite:///./{DB_PATH}"
+DB_DIR = Path("data")
+DB_DIR.mkdir(exist_ok=True)
+DATABASE_URL = f"sqlite+aiosqlite:///./{DB_DIR}/mg_events.db"
 
 engine = create_async_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 async def init_db():
-    """Cria as tabelas no SQLite."""
     try:
         async with engine.begin() as conn:
-            # ✅ Agora o metadata contém a definição da tabela 'eventos'
             await conn.run_sync(Base.metadata.create_all)
-        log.info("🚀 Tabelas criadas com sucesso no banco de dados.")
+        log.info("🚀 Database v9.0: Tabelas mapeadas e prontas.")
     except Exception as e:
-        log.error(f"❌ Erro ao inicializar tabelas: {e}")
-        raise
+        log.error(f"❌ Erro crítico no banco: {e}")
 
 async def get_session():
-    """Provider de sessão para o FastAPI."""
     async with AsyncSessionLocal() as session:
         try:
             yield session

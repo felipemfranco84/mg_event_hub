@@ -1,13 +1,12 @@
 """
-Padrão de Qualidade: SQLAlchemy 2.0 Mapping.
-Motivo: Classe base e modelo unificados para garantir que o metadata reconheça a tabela.
+Padrão de Qualidade: SQLAlchemy 2.0 Mapping (v9.0).
+Justificativa: Mapeamento centralizado para evitar 'no such table'.
 """
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy import String, Float, DateTime, func
 from datetime import datetime
 
 class Base(DeclarativeBase):
-    """Classe base para criação de tabelas via metadata."""
     pass
 
 class EventoModel(Base):
@@ -21,8 +20,5 @@ class EventoModel(Base):
     preco_base: Mapped[float] = mapped_column(Float, default=0.0)
     fonte: Mapped[str] = mapped_column(String(50), nullable=False)
     url_origem: Mapped[str] = mapped_column(String(500), nullable=False)
-    vibe: Mapped[str] = mapped_column(String(50), nullable=False)
+    vibe: Mapped[str] = mapped_column(String(50), nullable=False) # show, pousada, festival
     detectado_em: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-
-    def __repr__(self) -> str:
-        return f"<EventoModel(titulo={self.titulo}, cidade={self.cidade})>"
