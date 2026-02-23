@@ -1,12 +1,14 @@
 """
-Padrão de Qualidade: Advanced NLP Pipeline & Heuristics.
-Motivo: Extração estruturada de shows em PDFs não padronizados, isolando
-contexto geográfico e aplicando múltiplas camadas de reconhecimento (Regex).
+Padrão de Qualidade: High-Performance PDF Mining (v7.0.0).
+Motivo: Migração para PyMuPDF (fitz) para viabilizar processamento em e2-micro.
+Inclui barra de progresso visual e gerenciamento agressivo de memória.
 """
 import re
 import io
 import httpx
-import pdfplumber
+import fitz  # PyMuPDF
+import gc
+from tqdm import tqdm
 from datetime import datetime, timedelta
 from app.services.extractors.base import BaseExtractor
 from app.schemas.evento import EventoSchema
@@ -18,18 +20,15 @@ class DiarioOficialExtractor(BaseExtractor):
         super().__init__()
         self.base_url = "https://www.diariomunicipal.com.br/amm-mg/"
         
-        # Dicionário para conversão de datas textuais em português
         self.meses_pt = {
             "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
             "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
             "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
         }
 
-        # Padrões compilados para performance (Regex Hub)
+        # Regex Hub Otimizado
         self.re_gatilhos = re.compile(r"(contratação|show|apresentação|inexigibilidade|festa)", re.IGNORECASE)
         self.re_cidade = re.compile(r"PREFEITURA\s+MUNICIPAL\s+DE\s+([A-ZÀ-Ú\s\-]+)", re.IGNORECASE)
-        
-        # Padrões de extração de entidades
         self.re_artista = re.compile(r"(?:DUPLA|BANDA|SHOW(?: ARTÍSTICO)?(?: DE)?|CONTRATAÇÃO (?:DA|DO|DE)|ARTISTA)\s+([A-ZÀ-Ú0-9\s&\'\-]+?)(?:\s+PARA|\s+NO DIA|,|\s+DURANTE|\.)", re.IGNORECASE)
         self.re_data_numerica = re.compile(r"(\d{2}/\d{2}/\d{4})")
         self.re_data_textual = re.compile(r"DIA\s+(\d{1,2})\s+DE\s+([A-ZÀ-Ú]+)\s+DE\s+(\d{4})", re.IGNORECASE)
@@ -37,151 +36,94 @@ class DiarioOficialExtractor(BaseExtractor):
         self.re_evento = re.compile(r"(?:FESTA DE|CARNAVAL|ANIVERSÁRIO|EXPO|FESTIVAL)\s+([A-ZÀ-Ú0-9\s]+?)(?:\.|,|NO MUNICÍPIO)", re.IGNORECASE)
 
     async def extract(self):
-        """Orquestra o download e a extração do PDF da edição atual."""
-        log.info("🚀 Iniciando Pipeline NLP no Diário Oficial (AMM-MG)")
-        
+        log.info("🚀 Iniciando Pipeline High-Performance no D.O. (AMM-MG)")
         try:
             html = await self.fetch_html(self.base_url)
             if not html: return []
 
             tree = HTMLParser(html)
             pdf_input = tree.css_first("input#urlPdf")
-            
-            if not pdf_input:
-                log.warning("⚠️ Link do PDF não encontrado via seletor input#urlPdf.")
-                return []
+            if not pdf_input: return []
 
             pdf_url = pdf_input.attributes.get("value")
-            log.info(f"📄 Baixando PDF para memória: {pdf_url[:70]}...")
-
-            return await self._processar_pdf(pdf_url)
+            return await self._processar_pdf_performante(pdf_url)
 
         except Exception as e:
-            log.error(f"❌ Falha crítica na orquestração do D.O.: {e}")
+            log.error(f"❌ Falha crítica: {e}")
             return []
 
-    async def _processar_pdf(self, pdf_url: str):
-        """Faz o download do PDF e aplica a extração de texto contínua via pdfplumber."""
+    async def _processar_pdf_performante(self, pdf_url: str):
         eventos_validados = []
-        
-        async with httpx.AsyncClient(follow_redirects=True, timeout=90.0) as client:
-            try:
-                resp = await client.get(pdf_url)
-                resp.raise_for_status()
+        async with httpx.AsyncClient(follow_redirects=True, timeout=120.0) as client:
+            resp = await client.get(pdf_url)
+            resp.raise_for_status()
+            
+            # Abre o documento via streaming de memória
+            doc = fitz.open(stream=io.BytesIO(resp.content), filetype="pdf")
+            texto_completo = ""
+            
+            log.info(f"📊 Processando {len(doc)} páginas via PyMuPDF...")
+            
+            # Barra de progresso visível no terminal
+            for i in tqdm(range(len(doc)), desc="Lendo Páginas", unit="pag"):
+                page = doc.load_page(i)
+                texto_completo += page.get_text("text") + "\n"
                 
-                # Carrega o PDF na memória (sem tocar no disco)
-                with pdfplumber.open(io.BytesIO(resp.content)) as pdf:
-                    texto_completo = ""
-                    log.info(f"📚 PDF aberto com sucesso. Lendo {len(pdf.pages)} páginas...")
-                    
-                    for pagina in pdf.pages:
-                        texto = pagina.extract_text()
-                        if texto:
-                            texto_completo += texto + "\n"
-                            
-                log.info("🔍 Iniciando chunking geográfico e caça aos gatilhos...")
-                eventos_validados = self._analisar_texto_completo(texto_completo, pdf_url)
-                
-                log.info(f"✅ Extração finalizada. {len(eventos_validados)} contratos estruturados identificados.")
-                return eventos_validados
+                # Limpeza periódica de memória (Garbage Collection)
+                if i % 50 == 0:
+                    gc.collect()
 
-            except Exception as e:
-                log.error(f"❌ Erro ao ler conteúdo do PDF com pdfplumber: {e}")
-                return []
+            doc.close()
+            eventos_validados = self._analisar_texto(texto_completo, pdf_url)
+            gc.collect()
+            return eventos_validados
 
-    def _analisar_texto_completo(self, texto_completo: str, url: str):
-        """Divide o texto por prefeituras e busca os padrões de shows."""
+    def _analisar_texto(self, texto, url):
         encontrados = []
+        blocos = self.re_cidade.split(texto)
         
-        # Divide o texto gigantesco em blocos, usando as Prefeituras como delimitadores
-        blocos = self.re_cidade.split(texto_completo)
-        
-        # O split retorna [Lixo_antes, Cidade_1, Bloco_1, Cidade_2, Bloco_2...]
-        # Iteramos de 2 em 2 para pegar o par (Cidade, Conteúdo)
         for i in range(1, len(blocos) - 1, 2):
             cidade = blocos[i].strip().upper()
             conteudo = blocos[i+1]
             
-            # Filtro de Relevância: O bloco pertence a um contexto de evento?
             if self.re_gatilhos.search(conteudo):
-                try:
-                    evento = self._extrair_entidades(cidade, conteudo, url)
-                    if evento:
-                        encontrados.append(evento)
-                except Exception as e:
-                    log.debug(f"⚠️ Erro ao processar bloco da cidade {cidade}: {e}")
-                    continue
+                texto_limpo = re.sub(r'\s+', ' ', conteudo)
+                match_art = self.re_artista.search(texto_limpo)
+                
+                if match_art:
+                    artista = match_art.group(1).strip()
+                    if len(artista) > 60 or any(x in artista for x in ["EXTRATO", "PROCESSO"]): continue
                     
+                    match_val = self.re_valor.search(texto_limpo)
+                    preco = float(match_val.group(1).replace(".", "").replace(",", ".")) if match_val else 0.0
+                    
+                    match_ev = self.re_evento.search(texto_limpo)
+                    nome_ev = match_ev.group(1).strip() if match_ev else "Evento Municipal"
+                    
+                    encontrados.append(EventoSchema(
+                        titulo=f"SHOW: {artista} ({nome_ev})",
+                        data_evento=self._extrair_data(texto_limpo),
+                        cidade=cidade,
+                        local="Praça Pública",
+                        preco_base=preco,
+                        fonte="amm_mg_pdf",
+                        url_origem=url,
+                        vibe="show"
+                    ))
         return encontrados
 
-    def _extrair_entidades(self, cidade: str, texto_bloco: str, url: str):
-        """Aplica as regexes para isolar Artista, Data, Valor e Nome do Evento."""
-        # Limpa quebras de linha que atrapalham a Regex
-        texto_limpo = re.sub(r'\s+', ' ', texto_bloco)
-        
-        # 1. Identificar o Artista
-        match_artista = self.re_artista.search(texto_limpo)
-        if not match_artista:
-            return None # Se não achou artista claro, descarta para evitar falsos positivos
-            
-        artista = match_artista.group(1).strip()
-        
-        # Higienização: evitar que pegue textos longos demais por falha de regex
-        if len(artista) > 60 or "EXTRATO" in artista or "PROCESSO" in artista:
-            return None
-            
-        # 2. Identificar Valor
-        match_valor = self.re_valor.search(texto_limpo)
-        preco = 0.0
-        if match_valor:
-            preco_str = match_valor.group(1).replace(".", "").replace(",", ".")
-            preco = float(preco_str)
-            
-        # 3. Identificar Evento
-        match_evento = self.re_evento.search(texto_limpo)
-        nome_evento = match_evento.group(1).strip() if match_evento else "Evento Municipal"
-        
-        # 4. Identificar Data
-        data_evento = self._extrair_data(texto_limpo)
-        
-        log.info(f"🎯 SUCESSO | Cidade: {cidade} | Artista: {artista} | Valor: R${preco}")
-
-        return EventoSchema(
-            titulo=f"SHOW: {artista} ({nome_evento})",
-            data_evento=data_evento,
-            cidade=cidade,
-            local="Verificar no Edital (Praça Pública)",
-            preco_base=preco,
-            fonte="amm_mg_pdf",
-            url_origem=url,
-            vibe="show"
-        )
-
-    def _extrair_data(self, texto: str) -> datetime:
-        """Tenta encontrar data numérica (13/02/2026) ou textual (09 de maio de 2026)."""
-        # Tenta data textual primeiro
-        match_texto = self.re_data_textual.search(texto)
-        if match_texto:
+    def _extrair_data(self, texto):
+        m_txt = self.re_data_textual.search(texto)
+        if m_txt:
             try:
-                dia = int(match_texto.group(1))
-                mes_str = match_texto.group(2).lower()
-                ano = int(match_texto.group(3))
-                mes = self.meses_pt.get(mes_str, 1) # Default 1 se falhar
-                dt = datetime(ano, mes, dia)
-                if dt > datetime.now():
-                    return dt
-            except ValueError:
-                pass
-
-        # Fallback para data numérica
-        match_num = self.re_data_numerica.search(texto)
-        if match_num:
+                dt = datetime(int(m_txt.group(3)), self.meses_pt.get(m_txt.group(2).lower(), 1), int(m_txt.group(1)))
+                if dt > datetime.now(): return dt
+            except: pass
+        
+        m_num = self.re_data_numerica.search(texto)
+        if m_num:
             try:
-                dt = datetime.strptime(match_num.group(1), "%d/%m/%Y")
-                if dt > datetime.now():
-                    return dt
-            except ValueError:
-                pass
-                
-        # Fallback de segurança: 45 dias no futuro se não achar nada claro
+                dt = datetime.strptime(m_num.group(1), "%d/%m/%Y")
+                if dt > datetime.now(): return dt
+            except: pass
         return datetime.now() + timedelta(days=45)
