@@ -1,91 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MG Event Hub | Dashboard Profissional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-    <style>
-        .fc-event { cursor: pointer; padding: 2px; font-size: 0.85em; }
-        .vibe-show { background-color: #10b981 !important; border: none !important; }
-        .vibe-pousada { background-color: #3b82f6 !important; border: none !important; }
-    </style>
-</head>
-<body class="bg-slate-900 text-white font-sans">
-
-    <header class="border-b border-slate-700 bg-slate-800 p-4 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                MG EVENT HUB <span class="text-xs font-mono text-slate-400">v8.0</span>
-            </h1>
-            <div class="flex gap-4">
-                <input type="text" id="searchCity" placeholder="Filtrar cidade..." class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const calendarEl = document.getElementById('calendar');
+        const feedEl = document.getElementById('eventFeed');
         
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-2xl">
-                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                    📅 Calendário de Eventos Públicos
-                </h2>
-                <div id="calendar" class="text-slate-200"></div>
-            </div>
-        </div>
-
-        <div class="space-y-6">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl">
-                <h2 class="text-lg font-semibold mb-4 text-emerald-400">⚡ Radar de Oportunidades</h2>
-                <div id="eventFeed" class="space-y-4 max-h-[700px] overflow-y-auto pr-2">
-                    </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const calendarEl = document.getElementById('calendar');
-            const feedEl = document.getElementById('eventFeed');
-            
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                themeSystem: 'standard',
-                events: '/eventos',
-                eventDataTransform: function(data) {
-                    return {
-                        title: data.titulo,
-                        start: data.data_evento,
-                        className: data.vibe === 'show' ? 'vibe-show' : 'vibe-pousada'
-                    };
-                },
-                eventClick: function(info) {
-                    alert('Evento: ' + info.event.title + '\nCidade: ' + info.event.extendedProps.cidade);
-                }
-            });
-            calendar.render();
-
-            // Carregar Feed Lateral
-            async function loadFeed() {
-                const res = await fetch('/eventos');
-                const eventos = await res.json();
-                feedEl.innerHTML = eventos.map(e => `
-                    <div class="bg-slate-700 p-3 rounded-lg border-l-4 ${e.vibe === 'show' ? 'border-emerald-500' : 'border-blue-500'} hover:bg-slate-600 transition-all cursor-pointer">
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-mono text-slate-400">${e.cidade}</span>
-                            <span class="text-xs font-bold text-emerald-400">R$ ${e.preco_base.toLocaleString('pt-BR')}</span>
-                        </div>
-                        <h3 class="text-sm font-bold mt-1 uppercase">${e.titulo}</h3>
-                        <p class="text-[10px] text-slate-400 mt-1">📅 ${new Date(e.data_evento).toLocaleDateString('pt-BR')}</p>
-                    </div>
-                `).join('');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            events: '/eventos',
+            eventDataTransform: function(data) {
+                // Sincronização direta: API entrega 'title' e 'start'
+                return {
+                    id: data.id,
+                    title: data.title,
+                    start: data.start,
+                    className: data.vibe === 'show' ? 'vibe-show' : 'vibe-pousada',
+                    extendedProps: { cidade: data.cidade }
+                };
+            },
+            eventClick: function(info) {
+                alert('Evento: ' + info.event.title + '\nCidade: ' + info.event.extendedProps.cidade);
             }
-            loadFeed();
         });
-    </script>
-</body>
-</html>
+        calendar.render();
+
+        async function loadFeed() {
+            const res = await fetch('/eventos');
+            const eventos = await res.json();
+            feedEl.innerHTML = eventos.map(e => `
+                <div class="bg-slate-700 p-3 rounded-lg border-l-4 ${e.vibe === 'show' ? 'border-emerald-500' : 'border-blue-500'}">
+                    <div class="flex justify-between items-start text-[10px] text-slate-400">
+                        <span>${e.cidade}</span>
+                        <span class="text-emerald-400">R$ ${e.preco_base}</span>
+                    </div>
+                    <h3 class="text-sm font-bold mt-1 uppercase text-white">${e.title}</h3>
+                </div>
+            `).join('');
+        }
+        loadFeed();
+    });
+</script>
