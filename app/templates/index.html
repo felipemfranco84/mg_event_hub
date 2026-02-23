@@ -1,117 +1,380 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MG Event Hub | Dashboard v8.7</title>
+    <title>MG Event Hub Pro | Inteligência Turística</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        .fc-event { cursor: pointer; padding: 4px; font-size: 0.8em; border-radius: 4px; }
-        .vibe-show { background-color: #10b981 !important; border: none !important; color: white !important; }
-        .vibe-pousada { background-color: #3b82f6 !important; border: none !important; color: white !important; }
-        .fc-daygrid-event { white-space: normal !important; align-items: flex-start !important; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        /* Estilização Base e Variáveis */
+        :root { --primary: #10b981; --secondary: #3b82f6; --dark: #0f172a; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%); }
+        
+        /* Personalização do FullCalendar */
+        .fc-event { 
+            cursor: pointer; 
+            padding: 4px 8px; 
+            border-radius: 6px;
+            font-size: 0.85em;
+            border: none !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .fc-event:hover { transform: scale(1.02); }
+        
+        .vibe-show { background: linear-gradient(135deg, #10b981, #059669) !important; color: white !important; }
+        .vibe-pousada { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: white !important; }
+        .vibe-festival { background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important; color: white !important; }
+        
+        /* Componentes UI */
+        .glass {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        /* Loading Skeleton Animado */
+        .skeleton {
+            background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+            background-size: 200% 100%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        /* Scrollbar Moderna */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans">
+<body class="text-slate-100 min-h-screen">
 
-    <header class="border-b border-slate-700 bg-slate-800/50 backdrop-blur-md p-4 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic">
-                MG EVENT HUB <span class="text-xs font-mono text-slate-500 not-italic">PRO v8.7</span>
-            </h1>
-            <div class="flex gap-3">
-                <input type="text" id="searchCity" placeholder="Buscar cidade..." 
-                       class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+    <header class="glass sticky top-0 z-50 border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-map-marked-alt text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                        MG EVENT HUB
+                    </h1>
+                    <p class="text-xs font-medium text-slate-400">Inteligência de Demanda Turística</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <input type="text" id="searchCity" placeholder="📍 Buscar cidade..." 
+                           class="bg-slate-800 border border-slate-600 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full lg:w-64 transition-all">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                </div>
+                <button onclick="refreshData()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-sm font-semibold shadow-lg shadow-emerald-900/50 transition-all flex items-center gap-2">
+                    <i class="fas fa-sync-alt"></i> <span class="hidden sm:inline">Sincronizar</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-2xl">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
-                    <span class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">📅</span> 
-                    Agenda de Minas Gerais
-                </h2>
-                <div id="calendar"></div>
-            </div>
-        </div>
-
-        <div class="space-y-6">
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-cyan-400">
-                    <span class="p-2 bg-cyan-500/10 rounded-lg text-cyan-400">⚡</span> 
-                    Radar de Oportunidades
-                </h2>
-                <div id="eventFeed" class="space-y-4 max-h-[650px] overflow-y-auto pr-2">
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2">
+                <div class="glass rounded-2xl p-6 shadow-2xl">
+                    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                        <h2 class="text-xl font-bold flex items-center gap-3">
+                            <i class="fas fa-calendar-alt text-emerald-400"></i>
+                            Programação Oficial
+                        </h2>
+                        <div class="flex gap-3 text-xs font-medium bg-slate-800/50 px-3 py-2 rounded-lg">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>Shows</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>Hospedagem</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_#8b5cf6]"></span>Festivais</span>
+                        </div>
                     </div>
+                    <div id="calendar" class="text-slate-200 min-h-[600px]"></div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                
+                <div class="glass rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fas fa-chart-pie"></i> Indicadores de Demanda
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-slate-800/60 rounded-xl p-4 text-center border border-slate-700/50">
+                            <div class="text-3xl font-black text-emerald-400" id="countShows">0</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 mt-1">Shows</div>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-xl p-4 text-center border border-slate-700/50">
+                            <div class="text-3xl font-black text-blue-400" id="countPousadas">0</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 mt-1">Ofertas Hosp.</div>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-xl p-4 text-center border border-slate-700/50">
+                            <div class="text-3xl font-black text-purple-400" id="countFestivais">0</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 mt-1">Festivais</div>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-xl p-4 text-center border border-slate-700/50">
+                            <div class="text-3xl font-black text-cyan-400" id="countCidades">0</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 mt-1">Cidades Ativas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 shadow-xl flex flex-col max-h-[550px]">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-yellow-400">
+                        <i class="fas fa-satellite-dish"></i> Radar de Oportunidades
+                    </h3>
+                    <div id="eventFeed" class="space-y-3 overflow-y-auto pr-2 flex-grow">
+                        <div class="skeleton h-24 rounded-xl border border-slate-700"></div>
+                        <div class="skeleton h-24 rounded-xl border border-slate-700"></div>
+                        <div class="skeleton h-24 rounded-xl border border-slate-700"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const calendarEl = document.getElementById('calendar');
-            const feedEl = document.getElementById('eventFeed');
+        // ✅ LÓGICA CORE: Resolução Inteligente de Caminho (Resolve o Erro 404 Nginx)
+        const currentPath = window.location.pathname;
+        const baseUrl = currentPath.includes('mg_event_hub') ? '/mg_event_hub' : '';
+        const apiEndpoint = `${baseUrl}/eventos`;
+
+        let calendar;
+        let allEvents = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initCalendar();
+            loadEvents();
             
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            // Listener de busca
+            document.getElementById('searchCity').addEventListener('input', (e) => filterEvents(e.target.value));
+        });
+
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'pt-br',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,dayGridWeek' },
-                buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana' },
-                events: '/eventos',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek'
+                },
+                buttonText: { today: 'Hoje', month: 'Mês', list: 'Lista' },
+                events: apiEndpoint, // 🎯 Utiliza o endpoint dinâmico
+                eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                
                 eventDataTransform: function(data) {
                     return {
                         id: data.id,
                         title: data.title,
                         start: data.start,
-                        className: data.vibe === 'show' ? 'vibe-show' : 'vibe-pousada',
-                        extendedProps: { cidade: data.cidade }
+                        end: data.end || data.start,
+                        allDay: data.allDay !== false,
+                        className: `vibe-${data.vibe || 'show'}`,
+                        extendedProps: {
+                            cidade: data.cidade,
+                            local: data.local,
+                            preco: data.preco_base,
+                            vibe: data.vibe,
+                            url: data.url,
+                            fonte: data.fonte
+                        }
                     };
                 },
+                
                 eventClick: function(info) {
-                    Swal.fire({
-                        title: info.event.title,
-                        text: "Local: " + info.event.extendedProps.cidade,
-                        icon: 'info',
-                        background: '#1e293b',
-                        color: '#f1f5f9',
-                        confirmButtonColor: '#10b981'
-                    });
+                    showEventModal(info.event.title, info.event.extendedProps, info.event.startStr);
+                },
+                
+                loading: function(isLoading) {
+                    const feed = document.getElementById('eventFeed');
+                    if (isLoading && allEvents.length === 0) {
+                        feed.innerHTML = '<div class="skeleton h-24 rounded-xl border border-slate-700"></div>'.repeat(3);
+                    }
                 }
             });
             calendar.render();
+        }
 
-            async function loadFeed() {
-                try {
-                    const res = await fetch('/eventos');
-                    const eventos = await res.json();
-                    if (eventos.error) throw new Error(eventos.error);
-                    
-                    feedEl.innerHTML = eventos.map(e => `
-                        <div class="bg-slate-700/50 p-4 rounded-xl border-l-4 ${e.vibe === 'show' ? 'border-emerald-500' : 'border-blue-500'} hover:bg-slate-700 transition-all group">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-slate-200">${e.cidade}</span>
-                                <span class="text-xs font-mono font-bold text-emerald-400">R$ ${e.preco_base.toLocaleString('pt-BR')}</span>
+        async function loadEvents() {
+            try {
+                const res = await fetch(apiEndpoint); // 🎯 Fetch resiliente
+                if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                
+                const data = await res.json();
+                
+                // Previne falha se o backend não retornar array
+                if (!Array.isArray(data)) throw new Error("A resposta não é uma lista válida.");
+                
+                allEvents = data;
+                updateStats(allEvents);
+                renderFeed(allEvents);
+                
+            } catch (err) {
+                console.error('Falha de Rede ou Parse:', err);
+                document.getElementById('eventFeed').innerHTML = 
+                    `<div class="p-4 bg-red-900/30 border border-red-500/50 rounded-xl text-center">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
+                        <p class="text-red-200 text-sm">Falha ao conectar com o Hub.</p>
+                        <p class="text-red-400 text-xs mt-1">Tentando URL: ${apiEndpoint}</p>
+                    </div>`;
+            }
+        }
+
+        function updateStats(events) {
+            document.getElementById('countShows').textContent = events.filter(e => e.vibe === 'show').length;
+            document.getElementById('countPousadas').textContent = events.filter(e => e.vibe === 'pousada').length;
+            document.getElementById('countFestivais').textContent = events.filter(e => e.vibe === 'festival').length;
+            document.getElementById('countCidades').textContent = new Set(events.map(e => e.cidade)).size;
+        }
+
+        function renderFeed(events) {
+            const feed = document.getElementById('eventFeed');
+            
+            if (!events.length) {
+                feed.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-40 text-slate-500">
+                        <i class="fas fa-search-minus text-3xl mb-2"></i>
+                        <p class="text-sm">Nenhum evento detectado.</p>
+                    </div>`;
+                return;
+            }
+            
+            // Ordena cronologicamente e pega os 15 próximos
+            const proximos = [...events]
+                .sort((a, b) => new Date(a.start) - new Date(b.start))
+                .slice(0, 15);
+            
+            feed.innerHTML = proximos.map(e => {
+                const propsJson = JSON.stringify({
+                    cidade: e.cidade, local: e.local, preco: e.preco_base, 
+                    vibe: e.vibe, url: e.url, fonte: e.fonte
+                }).replace(/'/g, "\\'");
+                
+                return `
+                <div class="bg-slate-800/80 hover:bg-slate-700 rounded-xl p-4 cursor-pointer transition-all hover-lift border-l-4 ${getBorderColor(e.vibe)}"
+                     onclick='showEventModal("${e.title.replace(/"/g, '&quot;')}", ${propsJson}, "${e.start}")'>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                            <i class="fas fa-map-pin"></i> ${e.cidade}
+                        </span>
+                        <span class="text-sm font-black text-emerald-400">
+                            ${e.preco_base > 0 ? `R$ ${e.preco_base.toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 'GRÁTIS'}
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-sm mb-2 line-clamp-2 text-white">${e.title}</h4>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400"><i class="far fa-calendar-alt mr-1"></i> ${formatDate(e.start)}</span>
+                        <span class="px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider ${getBadgeColor(e.vibe)}">${e.vibe}</span>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function getBorderColor(vibe) {
+            return { 'show': 'border-emerald-500', 'pousada': 'border-blue-500', 'festival': 'border-purple-500' }[vibe] || 'border-slate-500';
+        }
+        
+        function getBadgeColor(vibe) {
+            return { 'show': 'bg-emerald-900/50 text-emerald-400', 'pousada': 'bg-blue-900/50 text-blue-400', 'festival': 'bg-purple-900/50 text-purple-400' }[vibe] || 'bg-slate-700 text-slate-300';
+        }
+
+        function formatDate(dateStr) {
+            const dt = new Date(dateStr + 'T00:00:00');
+            return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function showEventModal(title, props, startStr) {
+            const formatPreco = props.preco > 0 ? `R$ ${props.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 'Grátis / Não Informado';
+            
+            Swal.fire({
+                title: `<div class="text-xl font-black mb-2">${title}</div>`,
+                html: `
+                    <div class="text-left space-y-4 text-sm mt-4">
+                        <div class="bg-slate-800 p-3 rounded-lg flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-emerald-400">
+                                <i class="fas fa-map-marked-alt text-lg"></i>
                             </div>
-                            <h3 class="text-sm font-bold uppercase leading-tight text-white mb-2">${e.title}</h3>
-                            <div class="flex items-center text-[10px] text-slate-500 font-medium">
-                                <span>📅 ${new Date(e.start + 'T00:00:00').toLocaleDateString('pt-BR')}</span>
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Localização</p>
+                                <p class="font-medium text-white">${props.cidade}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">${props.local || 'Local a confirmar'}</p>
                             </div>
                         </div>
-                    `).join('');
-                } catch (err) {
-                    feedEl.innerHTML = `<p class="text-red-400 text-xs">Erro ao carregar feed: ${err.message}</p>`;
-                }
-            }
-            loadFeed();
-        });
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-800 p-3 rounded-lg">
+                                <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1"><i class="far fa-calendar-alt"></i> Data</p>
+                                <p class="font-medium text-white">${formatDate(startStr)}</p>
+                            </div>
+                            <div class="bg-slate-800 p-3 rounded-lg">
+                                <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1"><i class="fas fa-ticket-alt"></i> Preço Base</p>
+                                <p class="font-medium text-emerald-400">${formatPreco}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 p-3 rounded-lg text-xs">
+                            <span class="text-slate-400 font-bold uppercase">Fonte:</span> 
+                            <span class="text-slate-300">${props.fonte}</span>
+                        </div>
+                        
+                        ${props.url ? `
+                        <a href="${props.url}" target="_blank" class="w-full mt-4 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-emerald-900/50">
+                            Acessar Fonte Original <i class="fas fa-external-link-alt"></i>
+                        </a>` : ''}
+                    </div>
+                `,
+                background: '#1e293b',
+                color: '#f1f5f9',
+                showConfirmButton: false,
+                showCloseButton: true,
+                width: '450px',
+                customClass: { popup: 'border border-slate-700 rounded-2xl shadow-2xl' }
+            });
+        }
+
+        function filterEvents(term) {
+            if (!calendar) return;
+            const t = term.toLowerCase();
+            const filtered = allEvents.filter(e => e.cidade.toLowerCase().includes(t) || e.title.toLowerCase().includes(t));
+            
+            calendar.removeAllEvents();
+            calendar.addEventSource(filtered);
+            
+            if (t) { renderFeed(filtered); updateStats(filtered); } 
+            else { renderFeed(allEvents); updateStats(allEvents); }
+        }
+
+        async function refreshData() {
+            const Toast = Swal.mixin({ 
+                toast: true, position: 'top-end', showConfirmButton: false, 
+                timer: 2000, background: '#1e293b', color: '#f1f5f9' 
+            });
+            Toast.fire({ icon: 'info', title: 'Sincronizando com o Hub...' });
+            
+            await loadEvents();
+            calendar.refetchEvents(); // Recarrega o calendário
+            
+            Toast.fire({ icon: 'success', title: 'Inteligência Atualizada!' });
+        }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
