@@ -1,8 +1,7 @@
 """
-Padrão de Qualidade: JSON State Parsing (v9.3.0).
-Motivo: Aplicações React/Next.js (Sympla) alteram classes CSS dinamicamente.
-A abordagem resiliente é capturar a tag <script id="__NEXT_DATA__"> que contém
-o JSON bruto da aplicação e extrair os dados limpos diretamente.
+Padrão de Qualidade: Schema.org JSON-LD Extraction (v9.3.2).
+Motivo: Como o Next.js State foi ocultado pelo Sympla, utilizamos a tag padrão 
+de SEO (JSON-LD) que todo site de eventos precisa manter visível no HTML.
 """
 import json
 import httpx
@@ -18,7 +17,7 @@ class SymplaExtractor(BaseExtractor):
         self.cidades_mg = ["belo-horizonte", "uberlandia", "juiz-de-fora", "ouropreto"]
 
     async def extract(self):
-        log.info("🚀 [v9.3.0] Iniciando Sympla Extractor via JSON State...")
+        log.info("🚀 [v9.3.2] Iniciando Sympla Extractor via JSON-LD SEO...")
         todos_eventos = []
         
         async with httpx.AsyncClient(headers=self.get_headers(), follow_redirects=True, timeout=30.0) as client:
@@ -28,74 +27,71 @@ class SymplaExtractor(BaseExtractor):
                     response = await client.get(url)
                     
                     if response.status_code == 200:
-                        eventos = self._parse_nextjs_state(response.text, cidade)
+                        eventos = self._parse_json_ld(response.text, cidade)
                         todos_eventos.extend(eventos)
                         log.info(f"✅ Sympla: {len(eventos)} eventos extraídos em {cidade}.")
                 except Exception as e:
-                    log.error(f"❌ Erro ao buscar dados do Sympla para {cidade}: {e}")
+                    log.error(f"❌ Erro de rede ao acessar Sympla ({cidade}): {e}")
                     
         return todos_eventos
 
-    def _parse_nextjs_state(self, html: str, cidade: str):
-        """
-        Motivo: Interceptar o estado global do Next.js injetado no HTML.
-        """
+    def _parse_json_ld(self, html: str, cidade: str):
         eventos = []
         try:
             tree = HTMLParser(html)
-            # Localiza o script que o Next.js usa para hidratar o frontend
-            script_tag = tree.css_first("script#__NEXT_DATA__")
+            # Busca todas as tags de dados estruturados
+            script_tags = tree.css("script[type='application/ld+json']")
             
-            if not script_tag:
-                log.warning(f"⚠️ Sympla State JSON não encontrado para {cidade}.")
-                return []
-                
-            json_data = json.loads(script_tag.text())
-            
-            # Navegação segura pela estrutura complexa do JSON do Sympla
-            # Nota: O esquema do Sympla pode aninhar os itens sob pageProps
-            try:
-                items = json_data.get('props', {}).get('pageProps', {}).get('initialState', {}).get('search', {}).get('data', [])
-                # Fallback genérico caso a estrutura mude
-                if not items:
-                    log.warning("Estrutura JSON do Sympla alterada, tentando busca fallback...")
-                    # Simulação de segurança (Retorno vazio se não achar o array de dados para evitar crash)
-                    return []
-            except Exception:
+            if not script_tags:
+                log.warning(f"⚠️ Nenhuma tag JSON-LD encontrada em {cidade}.")
                 return []
 
-            for item in items[:15]: # Limite por cidade
+            for script in script_tags:
                 try:
-                    titulo = item.get('name')
-                    if not titulo: continue
+                    dados = json.loads(script.text())
                     
-                    # Tratamento de data
-                    start_str = item.get('start_date')
-                    data_ev = datetime.now()
-                    if start_str:
-                        # Cortar o timezone ou parsear dependendo do formato do Sympla
-                        clean_date = start_str.split('T')[0]
-                        data_ev = datetime.strptime(clean_date, "%Y-%m-%d")
+                    # O JSON-LD pode ser uma lista ou um objeto único
+                    lista_dados = dados if isinstance(dados, list) else [dados]
+                    
+                    for item in lista_dados:
+                        # Verifica se é do tipo Evento (Schema.org)
+                        if item.get("@type") == "Event":
+                            titulo = item.get("name", "Evento Sympla")
+                            url_ev = item.get("url", f"https://www.sympla.com.br/eventos/{cidade}")
+                            
+                            # Parse da Data (ISO Format)
+                            data_str = item.get("startDate")
+                            data_ev = datetime.now()
+                            if data_str:
+                                clean_date = data_str.split("T")[0]
+                                data_ev = datetime.strptime(clean_date, "%Y-%m-%d")
+                            
+                            # Parse do Local
+                            local_obj = item.get("location", {})
+                            local_nome = local_obj.get("name", "Local a confirmar")
+                            
+                            # Parse do Preço (Se houver oferta)
+                            preco = 0.0
+                            offers = item.get("offers")
+                            if isinstance(offers, list) and len(offers) > 0:
+                                preco = float(offers[0].get("price", 0.0))
+                            elif isinstance(offers, dict):
+                                preco = float(offers.get("price", 0.0))
 
-                    # Extração do Local (Venue)
-                    local = item.get('location', {}).get('name', 'Sympla Eventos')
-                    url_ev = item.get('url', f"https://www.sympla.com.br/eventos/{cidade}")
-
-                    eventos.append(EventoSchema(
-                        titulo=titulo,
-                        data_evento=data_ev,
-                        cidade=cidade.replace("-", " ").title(),
-                        local=local,
-                        preco_base=0.0, # Sympla requer chamada adicional por id para preços, 0 é default seguro
-                        fonte="sympla_json_api",
-                        url_origem=url_ev,
-                        vibe="festival" if "festival" in titulo.lower() else "show"
-                    ))
-                except Exception as inner_e:
-                    log.warning(f"⚠️ Erro no parse de um item isolado do Sympla: {inner_e}")
-                    continue
-
+                            eventos.append(EventoSchema(
+                                titulo=titulo,
+                                data_evento=data_ev,
+                                cidade=cidade.replace("-", " ").title(),
+                                local=local_nome,
+                                preco_base=preco,
+                                fonte="sympla_seo",
+                                url_origem=url_ev,
+                                vibe="festival" if "festival" in titulo.lower() else "show"
+                            ))
+                except Exception as e:
+                    continue # Pula script inválido e tenta o próximo
+                    
         except Exception as e:
-            log.error(f"❌ Falha no parse global do Sympla JSON: {e}")
+            log.error(f"❌ Falha global no parser do Sympla: {e}")
             
         return eventos
