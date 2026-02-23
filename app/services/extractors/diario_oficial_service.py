@@ -1,9 +1,10 @@
 """
-Padrão de Qualidade: Streaming Pipeline com Fatiamento Semântico (v11.1.0).
-Motivo: Combina a restrição de hardware (1GB RAM na GCP) com a inteligência 
-de extração de contratos múltiplos. A janela deslizante impede o estouro de memória (OOM), 
-enquanto o fatiamento monetário e o Veto Absoluto garantem que contratos de engenharia 
-sejam expurgados e que múltiplos shows na mesma publicação sejam capturados individualmente.
+Padrão de Qualidade: Streaming Pipeline com Fatiamento Semântico e UI de Terminal (v11.1.1).
+Motivo: Unificação final entre economia de hardware (GCP 1GB RAM) e precisão de extração.
+Correções v11.1.1:
+- Reintrodução da barra de progresso (tqdm) no loop de janelas.
+- Correção de SyntaxWarning nas strings de Regex (Raw Strings).
+- Manutenção do Veto Absoluto para expurgar infraestrutura e fatiamento por R$.
 """
 
 import re
@@ -11,6 +12,7 @@ import gc
 import io
 import httpx
 import hashlib
+from tqdm import tqdm
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -42,7 +44,7 @@ PALAVRAS_VETO = [
     "asfáltic", "recapeamento", "pavimentação", "saneamento", "esgoto", 
     "peças e acessórios", "pneus", "lubrificantes", "merenda", "medicamentos", 
     "informática", "software", "manutenção preventiva", "manutenção corretiva",
-    "brita", "engenharia", "terraplanagem", "drenagem"
+    "brita", "engenharia", "terraplanagem", "drenagem", "sinalização viária"
 ]
 
 KEYWORDS_TRIGGER = {
@@ -59,7 +61,7 @@ KEYWORDS_REFORCO = {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Expressões Regulares (Compiladas na importação)
+# Expressões Regulares (Compiladas como Raw Strings para evitar SyntaxWarnings)
 # ─────────────────────────────────────────────────────────────────────────────
 
 RE_PREFEITURA = re.compile(
@@ -83,7 +85,7 @@ RE_VALOR = re.compile(r"R\$\s*[\(]?\s*([\d\.]+,\d{2})")
 
 _LIXO_ARTISTA = [
     "EMPRESA", "LTDA", "S/A", "ESPECIALIZADA", "CONTRATAÇÃO",
-    "SERVIÇO", "PESSOA FÍSICA", "PESSOA JURÍDICA", "SAAE", "PRODUTORA"
+    "SERVIÇO", "PESSOA FÍSICA", "PESSOA JURÍDICA", "SAAE", "PRODUTORA", "PROMOÇÕES"
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -91,7 +93,6 @@ _LIXO_ARTISTA = [
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _calcular_score(texto: str) -> tuple[int, list[str]]:
-    """Motivo: Calcula o peso semântico isolado da fatia de texto."""
     score, encontradas = 0, []
     for kw, peso in KEYWORDS_TRIGGER.items():
         if kw in texto:
@@ -126,12 +127,11 @@ def _extrair_data(texto: str) -> Optional[str]:
 
 def _classificar_vibe(texto: str) -> str:
     t = texto.lower()
-    if any(w in t for w in ["sertanejo", "forró", "xote", "country"]): return "sertanejo"
-    if any(w in t for w in ["festival", "cultural", "teatro"]): return "festival"
+    if any(w in t for w in ["sertanejo", "forró", "xote", "country", "dupla"]): return "sertanejo"
+    if any(w in t for w in ["festival", "cultural", "teatro", "exposição"]): return "festival"
     return "show"
 
 def _gerar_janelas(reader, janela: int = JANELA_PAGINAS):
-    """Motivo: Mantém o controle de RAM estrito, liberando páginas antigas."""
     buffer = []
     total = len(reader.pages)
     for i in range(total):
@@ -154,7 +154,7 @@ class DiarioOficialExtractor(BaseExtractor):
     BASE_URL = "https://www.diariomunicipal.com.br/amm-mg/"
 
     async def extract(self) -> list[EventoSchema]:
-        log.info("🚀 [v11.1.0] D.O. Extractor — Iniciando Pipeline Otimizado")
+        log.info("🚀 [v11.1.1] D.O. Extractor — Iniciando Pipeline de Memória Inteligente")
         try:
             html = await self.fetch_html(self.BASE_URL)
             if not html: return []
@@ -170,7 +170,7 @@ class DiarioOficialExtractor(BaseExtractor):
             return []
 
     async def _processar_pdf_streaming(self, pdf_url: str) -> list[EventoSchema]:
-        log.info(f"📥 Baixando PDF em streaming...")
+        log.info(f"📥 Baixando PDF do dia...")
         chunks: list[bytes] = []
         total_bytes = 0
 
@@ -182,36 +182,40 @@ class DiarioOficialExtractor(BaseExtractor):
                         chunks.append(chunk)
                         total_bytes += len(chunk)
                         if total_bytes > MAX_PDF_BYTES:
-                            log.error("❌ PDF excede limite de segurança — abortando")
+                            log.error("❌ PDF excede limite de segurança (50MB) — abortando")
                             return []
 
-            log.info(f"✅ PDF baixado: {total_bytes / 1024:.0f} KB")
+            log.info(f"✅ Download concluído: {total_bytes / 1024:.0f} KB")
             pdf_bytes = b"".join(chunks)
             del chunks
             gc.collect()
 
             return self._extrair_eventos_streaming(pdf_bytes, pdf_url)
         except Exception as e:
-            log.error(f"❌ Falha ao baixar/processar PDF: {e}")
+            log.error(f"❌ Falha ao processar streaming do PDF: {e}")
             return []
 
     def _extrair_eventos_streaming(self, pdf_bytes: bytes, pdf_url: str) -> list[EventoSchema]:
         try:
             reader = PdfReader(io.BytesIO(pdf_bytes))
             total_paginas = len(reader.pages)
-            log.info(f"📄 Processando {total_paginas} páginas...")
+            log.info(f"📄 Minerando {total_paginas} páginas...")
 
             del pdf_bytes
             gc.collect()
 
             eventos: list[EventoSchema] = []
             hashes_vistos: set[str] = set()
-            paginas_processadas = 0
+            
+            # Inicializa a barra de progresso
+            pbar = tqdm(total=total_paginas, desc="Processando D.O.", unit="pág", leave=True)
 
             for janela_texto, pag_idx in _gerar_janelas(reader, JANELA_PAGINAS):
-                paginas_processadas += 1
+                # Atualiza a UI do terminal
+                pbar.n = pag_idx + 1
+                pbar.refresh()
 
-                # Limpeza do rodapé que quebra blocos ao meio
+                # Limpeza de ruído de cabeçalho AMM-MG para evitar quebras de Regex
                 janela_limpa = re.sub(r"Minas Gerais\s*,\s*\d{2}.*?www\.diariomunicipal\.com\.br/amm-mg\s*\d+", "", janela_texto)
                 blocos_mun = RE_PREFEITURA.split(janela_limpa)
 
@@ -219,15 +223,16 @@ class DiarioOficialExtractor(BaseExtractor):
                     cidade = blocos_mun[i].strip().upper()
                     conteudo = blocos_mun[i+1]
 
-                    # ✅ FATIAMENTO POR CONTRATO (Protege contra múltiplos eventos/obras no mesmo bloco)
+                    # ✅ FATIAMENTO MONETÁRIO: Divide o bloco de texto cada vez que encontrar um cifrão
                     fatias = re.split(r"(?=R\$\s*[\(]?\s*[\d\.]+,\d{2})", conteudo)
                     contexto_acumulado = ""
 
                     for fatia in fatias:
+                        # Mantém janela de contexto para não perder a âncora do artista (ex: "Contratação da Banda X...")
                         texto_analise = (contexto_acumulado[-250:] + fatia).lower()
                         contexto_acumulado = fatia
 
-                        # ✅ VETO ABSOLUTO (Economiza CPU matando ruído imediatamente)
+                        # ✅ VETO ABSOLUTO: Descarta imediatamente se for infraestrutura ou merenda
                         if any(veto in texto_analise for veto in PALAVRAS_VETO):
                             continue
 
@@ -251,6 +256,7 @@ class DiarioOficialExtractor(BaseExtractor):
                                 except ValueError:
                                     pass
 
+                        # Deduplicação via Hash
                         h = hashlib.md5(f"{artista}{cidade}".encode()).hexdigest()[:12]
                         if h not in hashes_vistos:
                             hashes_vistos.add(h)
@@ -258,19 +264,22 @@ class DiarioOficialExtractor(BaseExtractor):
                                 titulo=f"SHOW: {artista}",
                                 data_evento=data_evento,
                                 cidade=cidade,
-                                local="Praça Pública / Evento Oficial",
+                                local="Evento Municipal / Praça Pública",
                                 preco_base=valor,
                                 fonte=f"AMM-MG (v11.1)",
                                 url_origem=pdf_url,
                                 vibe=_classificar_vibe(texto_analise)
                             ))
-                            log.debug(f"🎵 [{pag_idx+1}/{total_paginas}] {artista} ({cidade}) | R$ {valor}")
+                            # Log opcional para acompanhar em tempo real abaixo da barra
+                            # log.debug(f"✨ Encontrado: {artista} em {cidade}")
 
-            log.info(f"✅ Concluído: {len(eventos)} eventos encontrados.")
+            pbar.close()
+            log.info(f"✅ Processamento finalizado. {len(eventos)} eventos extraídos com sucesso.")
             return eventos
 
         except Exception as e:
-            log.error(f"❌ Falha ao extrair do streaming: {e}")
+            if 'pbar' in locals(): pbar.close()
+            log.error(f"❌ Falha na extração por streaming: {e}")
             return []
         finally:
             gc.collect()
