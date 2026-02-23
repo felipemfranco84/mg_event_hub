@@ -1,12 +1,13 @@
 """
 Padrão de Qualidade: SQLAlchemy 2.0 Mapping.
-Motivo: Mapear a tabela de eventos no SQLite de forma otimizada.
+Motivo: Classe base e modelo unificados para garantir que o metadata reconheça a tabela.
 """
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy import String, Float, DateTime, func
 from datetime import datetime
 
 class Base(DeclarativeBase):
+    """Classe base para criação de tabelas via metadata."""
     pass
 
 class EventoModel(Base):

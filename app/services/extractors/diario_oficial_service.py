@@ -1,11 +1,11 @@
 """
-Padrão de Qualidade: Professional NLP Extraction Pipeline (v8.1.0).
-Motivo: Correção de erro de sintaxe e implementação de Blacklist rigorosa.
+Padrão de Qualidade: Professional NLP Extraction Pipeline (v8.8.0).
+Motivo: Blacklist reforçada para eliminar ruído de licitações comuns (asfalto, merenda, veículos).
 """
 import re
 import io
 import httpx
-import fitz  # PyMuPDF
+import fitz
 import gc
 from tqdm import tqdm
 from datetime import datetime, timedelta
@@ -14,25 +14,26 @@ from app.schemas.evento import EventoSchema
 from app.core.logger import log
 from selectolax.parser import HTMLParser
 
-# Lista de termos que indicam contratos que NÃO são de entretenimento
+# ✅ Lista negra expandida para filtrar o lixo do D.O.
 TERMOS_PROIBIDOS = [
-    "ASFÁLTICO", "RECAPEAMENTO", "MERENDA", "MEDICAMENTOS", "OBRAS", 
-    "REFORMA", "LIMPEZA", "VEÍCULOS", "PEÇAS", "PNEUS", "SOFTWARE", 
+    "ASFÁLTICO", "RECAPEAMENTO", "MERENDA", "MEDICAMENTOS", "OBRAS",
+    "REFORMA", "LIMPEZA", "VEÍCULOS", "PEÇAS", "PNEUS", "SOFTWARE",
     "CONSULTORIA", "SISTEMA", "MANUTENÇÃO", "CONSTRUÇÃO", "TUBULAÇÃO",
-    "ELÉTRICA", "HIDRÁULICA", "MÓVEIS", "EQUIPAMENTOS", "PINTURA", "CASCALHAMENTO"
+    "ELÉTRICA", "HIDRÁULICA", "MÓVEIS", "EQUIPAMENTOS", "PINTURA", 
+    "CASCALHAMENTO", "EMPRESA", "PESSOA JURÍDICA", "PESSOA FÍSICA",
+    "FORNECEDORES", "PRESTAÇÃO DE SERVIÇOS", "AQUISIÇÃO", "BENS", "MICROCHIPS",
+    "REVISÃO", "ACESSÓRIOS", "PEÇAS", "DIESEL", "GASOLINA"
 ]
 
 class DiarioOficialExtractor(BaseExtractor):
     def __init__(self):
         super().__init__()
         self.base_url = "https://www.diariomunicipal.com.br/amm-mg/"
-        
         self.meses_pt = {
             "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
             "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
             "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
         }
-
         self.re_gatilhos = re.compile(r"(contratação|show|apresentação|inexigibilidade|festa|evento artístico)", re.IGNORECASE)
         self.re_cidade = re.compile(r"PREFEITURA\s+MUNICIPAL\s+DE\s+([A-ZÀ-Ú\s\-]+)", re.IGNORECASE)
         self.re_artista = re.compile(r"(?:DUPLA|BANDA|SHOW(?: ARTÍSTICO)?(?: DE)?|CONTRATAÇÃO (?:DA|DO|DE)|ARTISTA|CANTOR(?:A)?)\s+([A-ZÀ-Ú0-9\s&\'\-]{3,60}?)(?:\s+PARA|\s+NO DIA|,|\s+DURANTE|\.|\s+OBJETO)", re.IGNORECASE)
@@ -42,7 +43,7 @@ class DiarioOficialExtractor(BaseExtractor):
         self.re_evento = re.compile(r"(?:FESTA DE|CARNAVAL|ANIVERSÁRIO|EXPO|FESTIVAL|VAQUEJADA)\s+([A-ZÀ-Ú0-9\s]{3,40}?)(?:\.|,|NO MUNICÍPIO|DURANTE)", re.IGNORECASE)
 
     async def extract(self):
-        log.info("🚀 [v8.1] Iniciando Pipeline de Alta Performance no D.O.")
+        log.info("🚀 [v8.8] Minerando D.O. com Blacklist Reforçada")
         try:
             html = await self.fetch_html(self.base_url)
             if not html: return []
@@ -52,27 +53,22 @@ class DiarioOficialExtractor(BaseExtractor):
             pdf_url = pdf_input.attributes.get("value")
             return await self._processar_pdf_performante(pdf_url)
         except Exception as e:
-            log.error(f"❌ Erro na extração do D.O.: {e}")
+            log.error(f"❌ Erro na extração: {e}")
             return []
 
     async def _processar_pdf_performante(self, pdf_url: str):
-        eventos_validados = []
         async with httpx.AsyncClient(follow_redirects=True, timeout=180.0) as client:
             try:
                 resp = await client.get(pdf_url)
-                resp.raise_for_status()
                 doc = fitz.open(stream=io.BytesIO(resp.content), filetype="pdf")
                 texto_completo = ""
-                for i in tqdm(range(len(doc)), desc="Minerando PDF", unit="pag"):
-                    page = doc.load_page(i)
-                    texto_completo += page.get_text("text") + "\n"
-                    if i % 30 == 0: gc.collect()
+                for i in tqdm(range(len(doc)), desc="Lendo PDF", unit="pag"):
+                    texto_completo += doc.load_page(i).get_text("text") + "\n"
+                    if i % 50 == 0: gc.collect()
                 doc.close()
-                eventos_validados = self._analisar_texto(texto_completo, pdf_url)
-                gc.collect()
-                return eventos_validados
+                return self._analisar_texto(texto_completo, pdf_url)
             except Exception as e:
-                log.error(f"❌ Erro ao processar PDF: {e}")
+                log.error(f"❌ Erro PDF: {e}")
                 return []
 
     def _analisar_texto(self, texto, url):
@@ -90,11 +86,15 @@ class DiarioOficialExtractor(BaseExtractor):
         texto_limpo = re.sub(r'\s+', ' ', texto_bloco)
         match_art = self.re_artista.search(texto_limpo)
         if not match_art: return None
-        
+
         artista = match_art.group(1).strip().upper()
 
-        # Filtro de Blacklist
-        if any(proibido in artista for proibido in TERMOS_PROIBIDOS) or "ESPECIALIZADA" in artista:
+        # ✅ FILTRO DE ELITE: Se o "artista" contém termos de empresa ou asfalto, descarta.
+        if any(proibido in artista for proibido in TERMOS_PROIBIDOS):
+            return None
+        
+        # Filtro adicional para evitar nomes genéricos demais
+        if len(artista) < 3 or artista.isdigit():
             return None
 
         match_val = self.re_valor.search(texto_limpo)
