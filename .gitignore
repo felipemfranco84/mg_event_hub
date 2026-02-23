@@ -1,0 +1,17 @@
+# Ambiente Virtual
+venv/
+__pycache__/
+*.pyc
+
+# Banco de Dados e Logs (Dados sensíveis e locais)
+data/*.db
+logs/*.log
+amostra_amm.html
+
+# Configurações sensíveis
+.env
+
+# Ideias e Sistema
+.vscode/
+.idea/
+.DS_Store

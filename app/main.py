@@ -1,11 +1,28 @@
-from fastapi import FastAPI
-from app.core.config import settings
-from app.routers import users
+"""
+Padrão de Qualidade: Web Serving & API.
+"""
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from contextlib import asynccontextmanager
+from app.core.database import init_db
+from app.core.scheduler import start_scheduler, scheduler
+from app.routers import eventos
+from app.core.logger import log
 
-app = FastAPI(title=settings.PROJECT_NAME)
+templates = Jinja2Templates(directory="app/templates")
 
-app.include_router(users.router)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    log.info("Iniciando MG-Event-Hub...")
+    await init_db()
+    start_scheduler()
+    yield
+    scheduler.shutdown()
 
-@app.get("/")
-def read_root():
-    return {"status": "Online", "project": settings.PROJECT_NAME}
+app = FastAPI(lifespan=lifespan, root_path="/mg_event_hub")
+app.include_router(eventos.router)
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})

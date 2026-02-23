@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MG-Event-Hub | Ouro de Minas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Inter', sans-serif; }
+        .card-evento { border: none; border-radius: 15px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card-evento:hover { transform: translateY(-5px); }
+        .vibe-show { border-left: 5px solid #ffc107; }
+        .vibe-pousada { border-left: 5px solid #0d6efd; }
+        .badge-price { background-color: #198754; color: white; border-radius: 10px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1"><i class="fa-solid fa-map-location-dot me-2"></i> MG-Event-Hub</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <input type="text" id="filtroCidade" class="form-control" placeholder="Buscar cidade (ex: Tiradentes)...">
+            </div>
+            <div class="col-md-4">
+                <select id="filtroVibe" class="form-select">
+                    <option value="">Todas as Vibes</option>
+                    <option value="show">Shows (D.O. / Sympla)</option>
+                    <option value="pousada">Hospedagem</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row" id="containerEventos">
+            </div>
+    </div>
+
+    <script>
+        async function carregarEventos() {
+            const cidade = document.getElementById('filtroCidade').value;
+            const vibe = document.getElementById('filtroVibe').value;
+            const container = document.getElementById('containerEventos');
+            
+            let url = '/mg_event_hub/eventos/';
+            const params = new URLSearchParams();
+            if (cidade) params.append('cidade', cidade);
+            if (vibe) params.append('vibe', vibe);
+            if (params.toString()) url += `?${params.toString()}`;
+
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            container.innerHTML = '';
+            result.data.forEach(ev => {
+                const dataFormatada = new Date(ev.data_evento).toLocaleDateString('pt-BR');
+                const card = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-evento vibe-${ev.vibe} h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-uppercase fw-bold">${ev.titulo}</h5>
+                                <p class="card-text text-muted mb-1"><i class="fa-solid fa-location-dot me-2"></i>${ev.cidade}</p>
+                                <p class="card-text text-muted small"><i class="fa-regular fa-calendar me-2"></i>${dataFormatada}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="badge-price">R$ ${ev.preco_base.toFixed(2)}</span>
+                                    <a href="${ev.url_origem}" target="_blank" class="btn btn-sm btn-outline-dark">Ver Fonte</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        document.getElementById('filtroCidade').addEventListener('input', carregarEventos);
+        document.getElementById('filtroVibe').addEventListener('change', carregarEventos);
+        carregarEventos();
+    </script>
+</body>
+</html>
