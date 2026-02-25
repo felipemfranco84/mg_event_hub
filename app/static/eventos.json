@@ -1,0 +1,781 @@
+{
+  "projeto": "MG-Event-Hub",
+  "gerado_em": "2026-02-24T16:06:04.861468",
+  "total": 86,
+  "eventos": [
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Espetáculo",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/espetaculo",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Espetáculo: \"Mil e uma Estrelas\" Cia de Pé Moleque",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/espetaculo/cultural/espetaculo-mil-e-uma-estrelas-cia-de-pe-moleque",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "O Jogo da Liberdade: A Capoeira em BH – Anos 60, 70 e 80",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/patrimonio-memoria-e-identidades-culturais-manifestacoes-tradicionais-religiosaspopulares/o-jogo-da-liberdade-capoeira-em-bh",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Espetáculo solo: “Picamalácia”",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/espetaculo/artes-cenicas/espetaculo-solo-picamalacia",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição Oguns kabecilês – Enxadigma - Babilak Bah",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-plasticas/exposicao-oguns-kabeciles-enxadigma-babilak-bah",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Jardim de Cabeças – Esculturas de Mestre Thibau",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-plasticas/jardim-de-cabecas-esculturas-de-mestre-thibau",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição “trans:paisagem” de Leonardo Finotti",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/museuspampulha/2025/eventos/exposicao/artes-visuais/exposicao-transpaisagem-de-leonardo-finotti",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: “Bonecos Giramundo”",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-visuais/exposicao-bonecos-giramundo",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: Projeto Desvios “Moradores – Palladium”",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/cultural/exposicao-projeto-desvios-moradores-palladium",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: “Omar Franco 70//50”",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-visuais/exposicao-omar-franco-7050",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Mostra: Habitar o inVISÍVEL \"Coabitar a cidade\"",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/mostra/artes-plasticas/mostra-habitar-o-invisivel-coabitar-cidade",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Atividades Gratuitas",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/gratuito",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Teatro e Cinema",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/tag/teatro",
+      "data": "2026-02-24 15:25:59",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: \"Festa no Céu\" Daiara Tukano",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-plasticas/exposicao-festa-no-ceu-daiara-tukano",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: \"Yoshitaka Amano - Além da Fantasia\"",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/exposicao/artes-plasticas/exposicao-yoshitaka-amano-alem-da-fantasia",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: “CeleBRAções”",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/exposicao/artes-visuais/exposicao-celebracoes",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: Diários Transnacionais",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/exposicao/cultural/exposicao-diarios-transnacionais",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição \"ECOTOPIA\" – Gui Mazzoni",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/exposicao/artes-visuais/exposicao-ecotopia-gui-mazzoni-0",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: \"ECOTOPIA\" Gui Mazzoni",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2025/eventos/exposicao/artes-visuais/exposicao-ecotopia-gui-mazzoni",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: Residência do Governador a um Parque para Todos",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/exposicao/artes-visuais/exposicao-residencia-do-governador-um-parque-para-todos",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição Internacional: Human Bodies Maravilhas do Corpo Humano",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/exposicao/artes-visuais/exposicao-internacional-human-bodies-maravilhas-do-corpo-humano",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Festa: Funk You \"Aniversario de 9 anos\"",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/festa/musica/festa-funk-you-aniversario-de-9-anos",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição: Poéticas da Luz - Janelas da Memória",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/exposicao/cultural/exposicao-poeticas-da-luz-janelas-da-memoria",
+      "data": "2026-02-24 15:26:04",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Exposição \"Sobre a Terra - Brígida Campbell\"",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/exposicao/artes-visuais/exposicao-sobre-terra-brigida-campbell",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Evento de rua",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/evento-de-rua",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Bloco de Carnaval: Ensaio Furacão Trembase",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/evento-de-rua/musica/bloco-de-carnaval-ensaio-furacao-trembase",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Apresentação artística",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/eventos/apresentacao-artistica",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "DE QUE ADIANTA SER GOSTOSO E NÃO PEGAR NINGUÉM?",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/apresentacao-artistica/cultural/de-que-adianta-ser-gostoso-e-nao-pegar-ninguem",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Ensaio de Carnaval: ApaEtucada",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/apresentacao-artistica/cultura-popular/ensaio-de-carnaval-apaetucada",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Sensa de Rolé",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/festa/musica/sensa-de-role",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Carnaval 2026 nos Espaços Municipais de Cultura",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/temporada/cultura-urbana/carnaval-2026-nos-espacos-municipais-de-cultura",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Programação Fevereiro 2026 - Centro Cultural Jardim Guanabara",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/oficina/cultural/programacao-fevereiro-2026-centro-cultural-jardim-guanabara",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Programação Fevereiro 2026 - Centro Cultural Bairro das Indústrias",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/oficina/cultural/programacao-fevereiro-2026-centro-cultural-bairro-das-industrias",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Programação Fevereiro 2026 - Centro Cultural Urucuia",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/oficina/cultural/programacao-fevereiro-2026-centro-cultural-urucuia",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "Portal BH (Drupal HTML)",
+      "titulo": "Programação Fevereiro 2026 - Centro Cultural São Geraldo",
+      "local": "Portal BH",
+      "categoria": "Cultura Institucional",
+      "url_evento": "https://portalbelohorizonte.com.br/2026/eventos/oficina/cultural/programacao-fevereiro-2026-centro-cultural-sao-geraldo",
+      "data": "2026-02-24 15:26:08",
+      "capturado_em": "2026-02-24 15:26:10"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Exposicao Bonecos Giramundo",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/exposicao-bonecos-giramundo/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Abertura De Pauta Palacio Todo Dia",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/abertura-de-pauta-palacio-todo-dia/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Exposicao Forma Espaco E Materia",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/exposicao-forma-espaco-e-materia/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Marilyn Monroe Billy Wilder O Encanto Acido De Hollywood",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/marilyn-monroe-billy-wilder-o-encanto-acido-de-hollywood/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Mostra Fuego Nuevo Cinema Mexicano Atual",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/mostra-fuego-nuevo-cinema-mexicano-atual/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Sessao Da Meia Noite Cecil Bem Demente",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/sessao-da-meia-noite-cecil-bem-demente/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Concertos Da Liberdade Beethoven Em Foco",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/concertos-da-liberdade-beethoven-em-foco/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Flavio Venturini Minha Historia 2",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/flavio-venturini-minha-historia-2/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Call The Police Tour 2026",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/call-the-police-tour-2026/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Concertos Da Liberdade Mulheres Voz Presenca E Protagonismo",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/concertos-da-liberdade-mulheres-voz-presenca-e-protagonismo/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "A Bela E A Fera O Espetaculo Musical 2",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/a-bela-e-a-fera-o-espetaculo-musical-2/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Tom Cavalcante O Tom Ta On",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/tom-cavalcante-o-tom-ta-on/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Espetaculo Impulsos 2",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/espetaculo-impulsos-2/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Djacir Pinheiro Canta Sons Do Brasil",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/djacir-pinheiro-canta-sons-do-brasil/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Lobao Power Trio",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/lobao-power-trio/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Daniel Boaventura",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/daniel-boaventura/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Fcs.Mg.Gov.Br",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/35725/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Fagner Apresenta Turne Muito Amor",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/fagner-apresenta-turne-muito-amor/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Breno Canta Gil E Djavan",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/breno-canta-gil-e-djavan/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "FCS (Bulletproof)",
+      "titulo": "Abba Experience In Concert",
+      "local": "FCS / Palácio das Artes",
+      "categoria": "Artes e Cultura",
+      "url_evento": "https://fcs.mg.gov.br/evento/abba-experience-in-concert/",
+      "data": "2026-02-24 15:40:33",
+      "capturado_em": "2026-02-24 15:40:33"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Vivencia De Atelie Para Bebes E Criancas No Quintal De Brincar",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/vivencia-de-atelie-para-bebes-e-criancas-no-quintal-de-brincar/3305720",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Abrace Minas 09 Dias E 08 Noites",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/abrace-minas-09-dias-e-08-noites/3268790",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Samba De Caboclo Em Belo Horizonte",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/samba-de-caboclo-em-belo-horizonte/3316408",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Curso De Silhouette 2 Dias De Imersao",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/curso-de-silhouette-2-dias-de-imersao/3321502",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Recepcao De Calouros Titimaga 2026",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/recepcao-de-calouros-titimaga-2026/3310295",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "E E Vai Ser Sempre Assim Yan Pampulha",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/e-e-vai-ser-sempre-assim-yan-pampulha/3283626",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Sabado Samba Do Toninho Gerais E Resenha Do Edgar",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/sabado-samba-do-toninho-gerais-e-resenha-do-edgar/3301580",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "08 05 Cpm 22 Em Belo Horizone Turne Especial De 30 Anos Show Extra",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/08-05-cpm-22-em-belo-horizone-turne-especial-de-30-anos-show-extra/3289890",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Bh Bird Watching Pampulha 01 Dia",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/bh-bird-watching-pampulha-01-dia/3219281",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Belo Horizonte Experiencias Na Estrada Real 3 Dias E 02 Noites",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/belo-horizonte-experiencias-na-estrada-real-3-dias-e-02-noites/3278861",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Gudinaite Belo Horizonte Monka Cervejaria",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/gudinaite-belo-horizonte-monka-cervejaria/3281044",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Baile Do Magua",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/baile-do-magua/3291519",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Groove In Sunset Jord E Vinter",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/groove-in-sunset-jord-e-vinter/3315271",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "1 6 Medico Unifenas 45",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/1-6-medico-unifenas-45/3312447",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Os Embalos De Sabado A Noite Anos 70 80 90",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/os-embalos-de-sabado-a-noite-anos-70-80-90/3261801",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Alee Klisman Dj Roxie",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/alee-klisman-dj-roxie/3286340",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "City Tour Centro Moderno De Belo Horizonte",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/city-tour-centro-moderno-de-belo-horizonte/3321008",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Bh De Jk Passeio Historico Sobre Juscelino Kubitschek",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/bh-de-jk-passeio-historico-sobre-juscelino-kubitschek/3320028",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Muito Mais Minas 11 Dias E 10 Noites",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/muito-mais-minas-11-dias-e-10-noites/3210115",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Ostara Festival Edicao Mabon 2026",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/ostara-festival-edicao-mabon-2026/3294498",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Desenho De Figura Humana",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/desenho-de-figura-humana/3320134",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Festa Francesissima Com Erick Jacquin",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/festa-francesissima-com-erick-jacquin/3281550",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Festival Sensacional 2026",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/festival-sensacional-2026/3043855",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "A Night To Remember 20 Anos Hannah Montana Edicao Belo Horizonte Rua Paracatu 65",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/a-night-to-remember-20-anos-hannah-montana-edicao-belo-horizonte-rua-paracatu-65/3309330",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "O Do Forro Em Bh Forro No Iate Bh",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/o-do-forro-em-bh-forro-no-iate-bh/3290514",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Festival So Amor 3A Edicao Existe Amor Em Bh",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/festival-so-amor-3a-edicao-existe-amor-em-bh/3278754",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Belo Horizonte Surpreendente 03 Dias E 02 Noites",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/belo-horizonte-surpreendente-03-dias-e-02-noites/3162126",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Curso Historia Da Arte Brasileira Do Modernismo Ao Contemporaneo",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/curso-historia-da-arte-brasileira-do-modernismo-ao-contemporaneo/3284010",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Bh Inhotim 03 Dias E 02 Noites",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/bh-inhotim-03-dias-e-02-noites/3301299",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Curso De Pintura Artistica Facial E Corporal Elefante Colorido Recreacoes",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/curso-de-pintura-artistica-facial-e-corporal-elefante-colorido-recreacoes/3313446",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    },
+    {
+      "fonte": "Sympla (Regex Master)",
+      "titulo": "Curso Presencial Em Belo Horizonte Velas Aromaticas E Decorativas",
+      "local": "Belo Horizonte (Sympla)",
+      "categoria": "Entretenimento",
+      "url_evento": "https://www.sympla.com.br/evento/curso-presencial-em-belo-horizonte-velas-aromaticas-e-decorativas/3286699",
+      "data": "2026-02-24 15:42:51",
+      "capturado_em": "2026-02-24 15:42:51"
+    }
+  ]
+}

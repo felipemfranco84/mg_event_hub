@@ -4,7 +4,7 @@ Motivo: Garantir que a coleta de dados ocorra em horários de baixo tráfego (ma
 """
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.services.manager import DataManager
+from app.services.manager import EventManager as DataManager
 from app.core.database import AsyncSessionLocal
 from app.core.logger import log
 

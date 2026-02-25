@@ -1,97 +1,86 @@
 """
-Padrão de Qualidade: Schema.org JSON-LD Extraction (v9.3.2).
-Motivo: Como o Next.js State foi ocultado pelo Sympla, utilizamos a tag padrão 
-de SEO (JSON-LD) que todo site de eventos precisa manter visível no HTML.
+SymplaExtractor v15.10.0 — Regex Master + Slug Extractor
+════════════════════════════════════════════════════════
+MOTIVO DA LÓGICA:
+A estrutura Next.js do Sympla esconde os links dentro de blocos de scripts
+e JSONs internos, tornando o parsing de HTML (DOM) cego. A abordagem final
+descarta o HTMLParser e aplica Regex directamente no texto bruto da resposta 
+HTTP para capturar qualquer string que corresponda a uma URL de evento.
 """
-import json
+import hashlib
 import httpx
+import asyncio
+import re
 from datetime import datetime
-from app.services.extractors.base import BaseExtractor
+
 from app.schemas.evento import EventoSchema
+from app.services.extractors.base import BaseExtractor
 from app.core.logger import log
-from selectolax.parser import HTMLParser
+
+def extrair_slug(url: str) -> str:
+    try:
+        partes = [p for p in url.split('/') if p and not p.isdigit()]
+        if partes:
+            slug = partes[-1].replace('-', ' ').title()
+            return slug
+    except:
+        pass
+    return ""
 
 class SymplaExtractor(BaseExtractor):
-    def __init__(self):
-        super().__init__()
-        self.cidades_mg = ["belo-horizonte", "uberlandia", "juiz-de-fora", "ouropreto"]
+    URL_ALVO = "https://www.sympla.com.br/eventos/belo-horizonte-mg"
 
-    async def extract(self):
-        log.info("🚀 [v9.3.2] Iniciando Sympla Extractor via JSON-LD SEO...")
-        todos_eventos = []
+    async def extract(self) -> list[EventoSchema]:
+        eventos_unicos = {}
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
         
-        async with httpx.AsyncClient(headers=self.get_headers(), follow_redirects=True, timeout=30.0) as client:
-            for cidade in self.cidades_mg:
-                try:
-                    url = f"https://www.sympla.com.br/eventos/{cidade}"
-                    response = await client.get(url)
-                    
-                    if response.status_code == 200:
-                        eventos = self._parse_json_ld(response.text, cidade)
-                        todos_eventos.extend(eventos)
-                        log.info(f"✅ Sympla: {len(eventos)} eventos extraídos em {cidade}.")
-                except Exception as e:
-                    log.error(f"❌ Erro de rede ao acessar Sympla ({cidade}): {e}")
-                    
-        return todos_eventos
-
-    def _parse_json_ld(self, html: str, cidade: str):
-        eventos = []
         try:
-            tree = HTMLParser(html)
-            # Busca todas as tags de dados estruturados
-            script_tags = tree.css("script[type='application/ld+json']")
-            
-            if not script_tags:
-                log.warning(f"⚠️ Nenhuma tag JSON-LD encontrada em {cidade}.")
-                return []
+            async with httpx.AsyncClient(timeout=30.0, headers=headers, follow_redirects=True) as client:
+                log.debug(f"[Sympla] GET Texto Bruto: {self.URL_ALVO}")
+                resp = await client.get(self.URL_ALVO)
+                
+                if resp.status_code != 200:
+                    log.error(f"[Sympla] Falha na rede: {resp.status_code}")
+                    return []
 
-            for script in script_tags:
-                try:
-                    dados = json.loads(script.text())
+                texto_bruto = resp.text
+                
+                # Regex 1: Captura URLs completas (https://www.sympla.com.br/evento/nome/123)
+                padrao_absoluto = r'https://www\.sympla\.com\.br/evento/[a-zA-Z0-9\-]+/[0-9]+'
+                links_absolutos = re.findall(padrao_absoluto, texto_bruto)
+                
+                # Regex 2: Captura caminhos relativos ocultos no JSON ("/evento/nome/123")
+                padrao_relativo = r'"(/evento/[a-zA-Z0-9\-]+/[0-9]+)"'
+                links_relativos = re.findall(padrao_relativo, texto_bruto)
+                
+                # Unifica e normaliza tudo
+                todos_links = links_absolutos + [f"https://www.sympla.com.br{path}" for path in links_relativos]
+                links_unicos = list(set(todos_links))
+                
+                log.debug(f"[Sympla] Regex encontrou {len(links_unicos)} URLs de eventos.")
+                
+                for url_ev in links_unicos:
+                    titulo = extrair_slug(url_ev)
                     
-                    # O JSON-LD pode ser uma lista ou um objeto único
-                    lista_dados = dados if isinstance(dados, list) else [dados]
+                    if len(titulo) < 5 or titulo.lower() == "evento":
+                        continue
+                        
+                    uid = hashlib.md5(url_ev.encode('utf-8')).hexdigest()
                     
-                    for item in lista_dados:
-                        # Verifica se é do tipo Evento (Schema.org)
-                        if item.get("@type") == "Event":
-                            titulo = item.get("name", "Evento Sympla")
-                            url_ev = item.get("url", f"https://www.sympla.com.br/eventos/{cidade}")
-                            
-                            # Parse da Data (ISO Format)
-                            data_str = item.get("startDate")
-                            data_ev = datetime.now()
-                            if data_str:
-                                clean_date = data_str.split("T")[0]
-                                data_ev = datetime.strptime(clean_date, "%Y-%m-%d")
-                            
-                            # Parse do Local
-                            local_obj = item.get("location", {})
-                            local_nome = local_obj.get("name", "Local a confirmar")
-                            
-                            # Parse do Preço (Se houver oferta)
-                            preco = 0.0
-                            offers = item.get("offers")
-                            if isinstance(offers, list) and len(offers) > 0:
-                                preco = float(offers[0].get("price", 0.0))
-                            elif isinstance(offers, dict):
-                                preco = float(offers.get("price", 0.0))
-
-                            eventos.append(EventoSchema(
-                                titulo=titulo,
-                                data_evento=data_ev,
-                                cidade=cidade.replace("-", " ").title(),
-                                local=local_nome,
-                                preco_base=preco,
-                                fonte="sympla_seo",
-                                url_origem=url_ev,
-                                vibe="festival" if "festival" in titulo.lower() else "show"
-                            ))
-                except Exception as e:
-                    continue # Pula script inválido e tenta o próximo
-                    
+                    if uid not in eventos_unicos:
+                        eventos_unicos[uid] = EventoSchema(
+                            id_unico=uid,
+                            titulo=titulo[:250],
+                            data_evento=datetime.now(),
+                            cidade="Belo Horizonte",
+                            local="Belo Horizonte (Sympla)",
+                            categoria="Entretenimento",
+                            preco_base=0.0,
+                            url_evento=url_ev,
+                            fonte="Sympla (Regex Master)"
+                        )
+                        
         except Exception as e:
-            log.error(f"❌ Falha global no parser do Sympla: {e}")
+            log.error(f"[Sympla] Falha catastrófica no Regex: {e}")
             
-        return eventos
+        return list(eventos_unicos.values())

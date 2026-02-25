@@ -1,0 +1,6 @@
+2026-02-24 03:00:03 | INFO     | app.core.database:init_db:20 - 🚀 Database v9.0: Tabelas mapeadas e prontas.
+2026-02-24 03:00:03 | INFO     | __main__:executar_carga:30 - 🔄 Iniciando Carga Completa (Modo Madrugada)...
+2026-02-24 03:00:03 | INFO     | app.services.manager:run_all_scrapers:21 - 🚀 Iniciando ciclo com 2 fontes limpas...
+2026-02-24 03:00:05 | INFO     | app.services.manager:run_all_scrapers:43 - 💾 PortalBHExtractor: 21 eventos culturais persistidos.
+2026-02-24 03:00:06 | WARNING  | app.services.manager:run_all_scrapers:50 - ⚠️ PalacioArtesExtractor: Retornou vazio.
+2026-02-24 03:00:06 | INFO     | __main__:executar_carga:35 - ✨ Ciclo finalizado. Total de eventos processados: 21

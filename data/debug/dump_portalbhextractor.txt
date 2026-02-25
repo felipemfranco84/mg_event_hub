@@ -1,0 +1,6 @@
+URL: https://portalbelohorizonte.com.br/eventos?_format=json
+STATUS: 406
+HEADERS: Headers([('date', 'Tue, 24 Feb 2026 17:51:32 GMT'), ('content-type', 'application/json'), ('content-length', '84'), ('connection', 'keep-alive'), ('keep-alive', 'timeout=15'), ('set-cookie', '__goc_session__=lljlzmufkaldftttfovicomdrsuuhopb; expires=Tue, 03-Mar-26 17:51:32 GMT; SameSite=Lax; path=/; secure; HttpOnly'), ('x-content-type-options', 'nosniff'), ('content-security-policy', 'upgrade-insecure-requests;'), ('link', '<https://portalbelohorizonte.com.br/eventos?_format=html>; rel="alternate"; type="text/html"'), ('x-drupal-dynamic-cache', 'UNCACHEABLE (no cacheability)'), ('content-language', 'pt-br'), ('x-content-type-options', 'nosniff'), ('x-frame-options', 'SAMEORIGIN'), ('x-generator', 'Drupal 10 (https://www.drupal.org)'), ('x-drupal-cache', 'UNCACHEABLE (no cacheability)'), ('set-cookie', 'SERVERID=B; path=/'), ('x-gocache-cachestatus', 'BYPASS'), ('server', 'gocache')])
+
+BODY:
+{"message":"No route found for the specified format json. Supported formats: html."}
